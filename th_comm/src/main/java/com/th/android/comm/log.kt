@@ -2,13 +2,23 @@ package com.th.android.comm
 
 import android.util.Log
 
-class TLog {
-    var enable: Boolean = true
-    var tag: String = "th_log"
+class TLog(var tag: String = "th_log", var enable: Boolean = true) {
 
     fun i(msg: String) {
         if (enable) {
             Log.i(tag, msg)
+        }
+    }
+
+    fun d(msg: String) {
+        if (enable) {
+            Log.d(tag, msg)
+        }
+    }
+
+    fun w(msg: String) {
+        if (enable) {
+            Log.w(tag, msg)
         }
     }
 
@@ -25,4 +35,4 @@ class TLog {
     }
 }
 
-val log = TLog()
+val tlog = TLog()
