@@ -1,13 +1,12 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id 'maven-publish'
-    id 'signing'
 }
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 16
@@ -65,7 +64,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 afterEvaluate {
     publishing {
         publications {
-            mavenAndroid(MavenPublication) {
+            release(MavenPublication) {
                 from components.release
                 groupId 'io.github.huhuang03'
                 artifactId 'th_comm.android'
@@ -103,7 +102,7 @@ afterEvaluate {
     }
 
     signing {
-        sign publishing.publications.mavenAndroid
+        sign publishing.publications.release
     }
 }
 
