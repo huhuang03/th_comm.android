@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'maven-publish'
+    id 'signing'
 }
 
 android {
@@ -33,7 +35,6 @@ android {
 }
 
 dependencies {
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.3.0'
@@ -41,4 +42,72 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
+
+task javadoc(type: Javadoc) {
+    dependsOn 'assembleRelease'
+    source = android.sourceSets.main.java.srcDirs
+}
+
+javadoc {
+    options {
+        encoding 'UTF-8'
+        charSet 'UTF-8'
+    }
+}
+
+// what is xx.doc.jar??
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set('javadoc')
+    from javadoc.destinationDir
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            mavenAndroid(MavenPublication) {
+                from components.release
+                groupId 'io.github.huhuang03'
+                artifactId 'th_comm.android'
+                version '0.0.1'
+
+                pom {
+                    licenses {
+                        license {
+                            name='The Apache Software License, Version 2.0'
+                            url='http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        def mavenUser = properties.getProperty("maven.user")
+        def mavenPassword = properties.getProperty("maven.password")
+
+        if (mavenUser == null || mavenPassword == null) {
+            throw new IllegalStateException("Please config maven.user and maven.password in local.properties")
+        }
+
+        maven {
+            url 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            credentials {
+                username mavenUser
+                password mavenPassword
+            }
+        }
+    }
+
+    signing {
+        sign publishing.publications.mavenAndroid
+    }
+}
+
+
+tasks.withType(Javadoc).all {
+    excludes = ['**/*.kt']
 }
