@@ -1,8 +1,8 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'maven-publish'
 }
-apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 android {
@@ -80,26 +80,28 @@ afterEvaluate {
                 }
             }
         }
-    }
 
-    repositories {
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        def mavenUser = properties.getProperty("maven.user")
-        def mavenPassword = properties.getProperty("maven.password")
 
-        if (mavenUser == null || mavenPassword == null) {
-            throw new IllegalStateException("Please config maven.user and maven.password in local.properties")
-        }
+        repositories {
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+            def mavenUser = properties.getProperty("maven.user")
+            def mavenPassword = properties.getProperty("maven.password")
 
-        maven {
-            url 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
-            credentials {
-                username mavenUser
-                password mavenPassword
+            if (mavenUser == null || mavenPassword == null) {
+                throw new IllegalStateException("Please config maven.user and maven.password in local.properties")
+            }
+
+            maven {
+                url 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+                credentials {
+                    username mavenUser
+                    password mavenPassword
+                }
             }
         }
     }
+
 
     signing {
         sign publishing.publications.release
