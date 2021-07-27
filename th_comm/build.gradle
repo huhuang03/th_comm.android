@@ -89,7 +89,7 @@ afterEvaluate {
             def mavenPassword = properties.getProperty("maven.password")
 
             if (mavenUser == null || mavenPassword == null) {
-                throw new IllegalStateException("Please config maven.user and maven.password in local.properties")
+                logger.warn("Please config maven.user and maven.password in local.properties")
             }
 
             maven {
