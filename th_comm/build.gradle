@@ -71,13 +71,29 @@ afterEvaluate {
                 version '0.0.1-rc.1'
 
                 pom {
+                    name = "th_comm.android"
+                    description = "android common util funcitons."
+                    url = "https://gitlab.com/th_libs/android/th_comm.android"
                     licenses {
                         license {
                             name='The Apache Software License, Version 2.0'
                             url='http://www.apache.org/licenses/LICENSE-2.0.txt'
                         }
                     }
+                    developers {
+                        developer {
+                            id = "th"
+                            name = 'th'
+                            email = "huhuang03@gmail.com"
+                        }
+                    }
+                    scm {
+                        connection = 'git@gitlab.com:th_libs/android/th_comm.android.git'
+                        developerConnection = 'mailto:huhuang03@gmail.com'
+                        url = 'https://gitlab.com/th_libs/android/th_comm.android'
+                    }
                 }
+
             }
         }
 
