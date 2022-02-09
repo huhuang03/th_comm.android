@@ -73,7 +73,7 @@ afterEvaluate {
                 pom {
                     name = "th_comm.android"
                     description = "android common util funcitons."
-                    url = "https://gitlab.com/th_libs/android/th_comm.android"
+                    url = "https://github.com/huhuang03/th_comm.android"
                     licenses {
                         license {
                             name='The Apache Software License, Version 2.0'
