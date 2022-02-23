@@ -8,15 +8,12 @@ import com.th.android.comm.util.spGetStr
 import com.th.android.comm.util.spSaveStr
 import java.io.File
 
-
 interface ICache {
     fun save(id: String)
     fun load(): String
 }
 
-class CommonCache(context: Context, spCacheKey: String, fileCachePath: String, val defaultVal: () -> String): ICache {
-    private var mCaches = listOf(MemoryIdCache(), SpIdCache(spCacheKey, context), SdCardIdCache(fileCachePath))
-
+open class ListCache(private val mCaches: List<ICache>): ICache {
     override fun save(id: String) {
         mCaches.forEach { it.save(id) }
     }
@@ -24,10 +21,22 @@ class CommonCache(context: Context, spCacheKey: String, fileCachePath: String, v
     override fun load(): String {
         var id = mCaches.firstOrNull { it.load().isNotEmpty() }?.load()?: ""
         if (id.isBlank()) {
-            id = defaultVal()
+            id = ""
         }
         return id
     }
+}
+
+class IntervalCache(context: Context, spCacheKey: String): ListCache(listOf(MemoryIdCache(), SpCache(spCacheKey, context))) {}
+
+class CommonCache(context: Context, spCacheKey: String, fileCachePath: String): ListCache(mutableListOf(
+    MemoryIdCache(), SpCache(spCacheKey, context)
+).apply {
+    if (fileCachePath.isBlank()) {
+        add(SdCardCache(fileCachePath))
+    }
+}) {
+    constructor(context: Context, spCacheKey: String): this(context, spCacheKey, "")
 }
 
 
@@ -44,7 +53,7 @@ class MemoryIdCache: ICache {
 }
 
 
-class SpIdCache(val key: String, context: Context): ICache {
+class SpCache(val key: String, context: Context): ICache {
     val mContext = context.applicationContext
 
     override fun save(id: String) {
@@ -57,7 +66,7 @@ class SpIdCache(val key: String, context: Context): ICache {
 
 }
 
-class SdCardIdCache(private val fileName: String): ICache {
+class SdCardCache(private val fileName: String): ICache {
 
     override fun save(id: String) {
         File(getCacheFilePath()).writeTextEx(id)
