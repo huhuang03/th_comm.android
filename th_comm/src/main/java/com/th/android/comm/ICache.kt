@@ -32,7 +32,7 @@ class IntervalCache(context: Context, spCacheKey: String): ListCache(listOf(Memo
 class CommonCache(context: Context, spCacheKey: String, fileCachePath: String): ListCache(mutableListOf(
     MemoryIdCache(), SpCache(spCacheKey, context)
 ).apply {
-    if (fileCachePath.isBlank()) {
+    if (fileCachePath.isNotBlank()) {
         add(SdCardCache(fileCachePath))
     }
 }) {
