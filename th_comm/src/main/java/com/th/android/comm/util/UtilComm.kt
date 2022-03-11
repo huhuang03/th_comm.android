@@ -7,7 +7,7 @@ import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
 
-fun getProcessName(fallback: String = ""): String? {
+fun getProcessName(fallback: String = ""): String {
     return if (Build.VERSION.SDK_INT >= 28) Application.getProcessName()
     else try {
         @SuppressLint("PrivateApi") val activityThread = Class.forName("android.app.ActivityThread")
@@ -17,14 +17,9 @@ fun getProcessName(fallback: String = ""): String? {
         val methodName = "currentProcessName"
         @SuppressLint("DiscouragedPrivateApi") val getProcessName: Method =
             activityThread.getDeclaredMethod(methodName)
-        (getProcessName.invoke(null) as String?)?: ""
-    } catch (e: ClassNotFoundException) {
-        throw RuntimeException(e)
-    } catch (e: IllegalAccessException) {
-        throw RuntimeException(e)
-    } catch (e: NoSuchMethodException) {
-        throw RuntimeException(e)
-    } catch (e: InvocationTargetException) {
-        throw RuntimeException(e)
+        (getProcessName.invoke(null) as String?)?: fallback
+    } catch (e: Throwable) {
+        // ignore?
+        fallback
     }
 }
